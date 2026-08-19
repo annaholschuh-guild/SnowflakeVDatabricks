@@ -1,0 +1,28 @@
+What are the current sources?
+Databases, files, APIs, other?
+External partners or customers?
+Any Kafka or event systems? 
+Do they provide timestamps/deltas?
+How often is data loaded?
+
+What tools are used along with Snowflake?
+Data engineering tools?
+Ingestion tools?
+BI tools?
+AI platforms?
+
+How is the data transformed?
+Medallion architecture?
+Other?
+
+How is the data consumed?
+Internal, BI use cases?
+API calls, subsecond response?
+AI, MCP servers?
+Downstream platforms?
+External partners or customers?
+
+Infrastructure setup?
+Auth providers?
+Network / Privatelink?
+DR plans?
