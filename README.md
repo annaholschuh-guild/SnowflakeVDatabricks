@@ -18,6 +18,60 @@ Run Phase 1 and Phase 2 independently, on whatever schedule suits each. Phase 3 
 `output/{snowflake,databricks}-summary.json` files each of them writes and builds the side-by-side
 comparison — it opens no database connection and starts no Spark session of its own.
 
+## Example output
+
+<table>
+<tr><td width="33%">
+
+**Snowflake usage report**
+<a href="docs/screenshots/snowflake-report.png"><img src="docs/screenshots/snowflake-report.png" alt="Snowflake usage report — Overview + Cost sections"></a>
+
+</td><td width="33%">
+
+**Databricks usage report**
+<a href="docs/screenshots/databricks-report.png"><img src="docs/screenshots/databricks-report.png" alt="Databricks usage report — Overview + Cost sections"></a>
+
+</td><td width="33%">
+
+**Comparison report**
+<a href="docs/screenshots/comparison-report.png"><img src="docs/screenshots/comparison-report.png" alt="Comparison report — Overview + Cost sections"></a>
+
+</td></tr>
+</table>
+
+Each is a top-of-page crop (Overview + first section) of a real generated report — click through to
+the repo copy for the full-size image. Every report is a single self-contained HTML file, so these
+are just what opening one in a browser looks like, not a separate rendering path.
+
+Screenshots go stale as sections change — regenerate them from a real, already-generated report with
+headless Chrome rather than a manual screenshot tool, so they're reproducible:
+
+```bash
+CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"   # adjust for your OS/browser
+
+"$CHROME" --headless --disable-gpu --hide-scrollbars --window-size=1400,1300 --virtual-time-budget=4000 \
+  --screenshot=docs/screenshots/snowflake-report.png \
+  "file://$(pwd)/output/snowflake-usage-report.html"
+
+"$CHROME" --headless --disable-gpu --hide-scrollbars --window-size=1400,1600 --virtual-time-budget=6000 \
+  --screenshot=docs/screenshots/databricks-report.png \
+  "file://$(pwd)/output/databricks-usage-report.html"
+
+"$CHROME" --headless --disable-gpu --hide-scrollbars --window-size=1400,1300 --virtual-time-budget=4000 \
+  --screenshot=docs/screenshots/comparison-report.png \
+  "file://$(pwd)/output/comparison-report.html"
+```
+
+`--virtual-time-budget` (milliseconds) matters — it's how long Chrome lets the page's JS run before
+capturing, and Plotly's charts need a moment to draw; too short and you'll get blank chart areas.
+`--window-size=W,H` sets the crop — taller captures more of the page but past a point on a long
+report you'll want a section-specific crop instead of a single giant image (append `#dbxCostBody`,
+`#cmpProjectionBody`, etc. — the real section anchor IDs from `toggleSection(...)` calls in the HTML
+— to the URL to scroll near that section first, then trim the window height to match).
+
+`docs/screenshots/` is deliberately **not** gitignored (unlike `data/`/`output/`) — these are meant
+to be committed and visible on the repo's landing page.
+
 ## Prerequisites
 
 - JDK 17 (Spark 3.5.1; `build.sbt` already sets the `--add-opens` flags JDK 17 needs)
